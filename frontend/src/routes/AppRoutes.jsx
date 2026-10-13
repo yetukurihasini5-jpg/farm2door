@@ -119,6 +119,7 @@ const AppRoutes = () => {
         <Route index element={<Navigate to="/consumer/dashboard" replace />} />
         <Route path="dashboard" element={<ConsumerDashboard />} />
         <Route path="orders" element={<OrderHistoryPage />} />
+        <Route path="orders/:id" element={<OrderDetailPage />} />
         <Route path="addresses" element={<ConsumerAddressesPage />} />
         <Route path="notifications" element={<NotificationsPage />} />
         <Route path="profile" element={<ProfilePage />} />
