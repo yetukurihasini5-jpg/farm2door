@@ -68,7 +68,13 @@ const CartPage = () => {
     );
   }
 
-  const hasUnavailableItems = items.some((item) => !item.isAvailable);
+  const isAvailableItem = (item) => {
+    if (typeof item.isAvailable === 'boolean') return item.isAvailable;
+    if (typeof item.available === 'boolean') return item.available;
+    return Number(item.availableStock ?? 0) >= Number(item.quantity ?? 1);
+  };
+
+  const hasUnavailableItems = items.some((item) => !isAvailableItem(item));
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
@@ -108,7 +114,7 @@ const CartPage = () => {
                       ₹{item.unitPrice} <span className="text-stone-400 font-normal">/ {item.unit}</span>
                     </p>
 
-                    {!item.isAvailable && (
+                    {!isAvailableItem(item) && (
                       <span className="text-[11px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md inline-block mt-1">
                         Exceeds stock or unavailable (Only {item.availableStock} {item.unit} left)
                       </span>
