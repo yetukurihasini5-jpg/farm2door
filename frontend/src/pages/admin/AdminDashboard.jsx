@@ -1,0 +1,283 @@
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import {
+  DollarSign,
+  Package,
+  Users,
+  Sprout,
+  ShieldCheck,
+  TrendingUp,
+  Clock,
+  ArrowRight,
+  Eye,
+  RefreshCw,
+  Tags,
+  BarChart3,
+} from 'lucide-react';
+import { adminService } from '../../services/adminService';
+import OrderStatusBadge from '../../components/orders/OrderStatusBadge';
+import { LoadingSpinner } from '../../components/common/LoadingSpinner';
+
+const AdminDashboard = () => {
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchStats = async () => {
+    try {
+      const data = await adminService.getDashboardStats();
+      setStats(data);
+    } catch (err) {
+      console.error('Failed to load admin stats:', err);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchStats();
+  };
+
+  if (loading) {
+    return <LoadingSpinner text="Fetching platform analytics..." />;
+  }
+
+  const kpis = [
+    {
+      title: 'Gross Platform Sales',
+      value: `₹${(stats?.totalRevenue || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      description: 'Delivered & active orders',
+      icon: DollarSign,
+      color: 'bg-emerald-500',
+      lightColor: 'bg-emerald-50 text-emerald-700 border-emerald-100',
+    },
+    {
+      title: 'Total Platform Orders',
+      value: stats?.totalOrders || 0,
+      description: `${stats?.pendingOrders || 0} pending fulfillment`,
+      icon: Package,
+      color: 'bg-blue-600',
+      lightColor: 'bg-blue-50 text-blue-700 border-blue-100',
+    },
+    {
+      title: 'Registered Producers',
+      value: stats?.totalFarmers || 0,
+      description: 'Verified & active farmers',
+      icon: Sprout,
+      color: 'bg-brand-600',
+      lightColor: 'bg-brand-50 text-brand-700 border-brand-100',
+    },
+    {
+      title: 'Active Consumers',
+      value: stats?.totalConsumers || 0,
+      description: 'Direct buying households',
+      icon: Users,
+      color: 'bg-purple-600',
+      lightColor: 'bg-purple-50 text-purple-700 border-purple-100',
+    },
+  ];
+
+  return (
+    <div className="space-y-8 animate-in fade-in duration-300">
+      {/* Header Banner */}
+      <div className="bg-gradient-to-r from-stone-900 via-stone-800 to-stone-900 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="px-3 py-1 rounded-full bg-stone-700/60 text-brand-400 text-xs font-semibold backdrop-blur-sm border border-stone-600">
+                Super Admin Console
+              </span>
+              <span className="text-xs text-stone-400">Live Database Metrics</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
+              Platform Administration & Governance
+            </h1>
+            <p className="mt-2 text-stone-300 text-sm max-w-xl leading-relaxed">
+              Oversee the direct farm-to-consumer ecosystem, review producer verifications, moderate catalog listings, and inspect order pipelines.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-all border border-white/15 flex items-center gap-2 backdrop-blur-sm"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+              Refresh
+            </button>
+            <Link
+              to="/admin/reports"
+              className="px-5 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-400 text-brand-950 font-bold text-xs shadow-lg shadow-brand-500/20 transition-all flex items-center gap-2"
+            >
+              <BarChart3 className="w-4 h-4" />
+              Download Sales Reports
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {kpis.map((kpi, idx) => {
+          const Icon = kpi.icon;
+          return (
+            <div
+              key={idx}
+              className="bg-white rounded-2xl border border-stone-200/80 p-6 shadow-sm hover:shadow-md transition-shadow"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider">
+                  {kpi.title}
+                </span>
+                <div className={`p-2.5 rounded-xl border ${kpi.lightColor}`}>
+                  <Icon className="w-5 h-5" />
+                </div>
+              </div>
+              <div className="text-2xl font-black text-stone-900">{kpi.value}</div>
+              <p className="text-xs text-stone-500 mt-1">{kpi.description}</p>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Quick Navigation Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <Link
+          to="/admin/users"
+          className="bg-white rounded-2xl border border-stone-200/80 p-5 shadow-sm hover:border-brand-500 transition-all group flex items-center justify-between"
+        >
+          <div className="flex items-center gap-3.5">
+            <div className="p-3 rounded-xl bg-stone-100 text-stone-800 group-hover:bg-brand-50 group-hover:text-brand-700 transition-colors">
+              <Users className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-stone-900">User & Farmer Control</h3>
+              <p className="text-xs text-stone-500">Toggle activations & verify farmers</p>
+            </div>
+          </div>
+          <ArrowRight className="w-4 h-4 text-stone-400 group-hover:text-brand-600 group-hover:translate-x-1 transition-all" />
+        </Link>
+
+        <Link
+          to="/admin/categories"
+          className="bg-white rounded-2xl border border-stone-200/80 p-5 shadow-sm hover:border-brand-500 transition-all group flex items-center justify-between"
+        >
+          <div className="flex items-center gap-3.5">
+            <div className="p-3 rounded-xl bg-stone-100 text-stone-800 group-hover:bg-brand-50 group-hover:text-brand-700 transition-colors">
+              <Tags className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-stone-900">Produce Categories</h3>
+              <p className="text-xs text-stone-500">Manage catalog taxonomy</p>
+            </div>
+          </div>
+          <ArrowRight className="w-4 h-4 text-stone-400 group-hover:text-brand-600 group-hover:translate-x-1 transition-all" />
+        </Link>
+
+        <Link
+          to="/admin/orders"
+          className="bg-white rounded-2xl border border-stone-200/80 p-5 shadow-sm hover:border-brand-500 transition-all group flex items-center justify-between"
+        >
+          <div className="flex items-center gap-3.5">
+            <div className="p-3 rounded-xl bg-stone-100 text-stone-800 group-hover:bg-brand-50 group-hover:text-brand-700 transition-colors">
+              <Package className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-stone-900">All Platform Orders</h3>
+              <p className="text-xs text-stone-500">Inspect full order history & status</p>
+            </div>
+          </div>
+          <ArrowRight className="w-4 h-4 text-stone-400 group-hover:text-brand-600 group-hover:translate-x-1 transition-all" />
+        </Link>
+      </div>
+
+      {/* Recent Platform Orders Table */}
+      <div className="bg-white rounded-3xl border border-stone-200/80 shadow-sm overflow-hidden">
+        <div className="p-6 border-b border-stone-100 flex items-center justify-between">
+          <div>
+            <h2 className="text-base font-extrabold text-stone-900">Recent Platform Transactions</h2>
+            <p className="text-xs text-stone-500 mt-0.5">Global transaction log across all farmers and consumers</p>
+          </div>
+          <Link
+            to="/admin/orders"
+            className="text-xs font-bold text-brand-700 hover:text-brand-800 flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-brand-50 transition-colors"
+          >
+            View All <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        {stats?.recentOrders && stats.recentOrders.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-stone-50/80 text-stone-500 uppercase tracking-wider text-[10px] font-semibold border-b border-stone-100">
+                <tr>
+                  <th className="py-3 px-6">Order ID</th>
+                  <th className="py-3 px-6">Date</th>
+                  <th className="py-3 px-6">Consumer</th>
+                  <th className="py-3 px-6">Destination</th>
+                  <th className="py-3 px-6">Amount (₹)</th>
+                  <th className="py-3 px-6">Status</th>
+                  <th className="py-3 px-6 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-stone-100">
+                {stats.recentOrders.map((ord) => (
+                  <tr key={ord.id} className="hover:bg-stone-50/60 transition-colors">
+                    <td className="py-4 px-6 font-mono font-bold text-stone-900">
+                      #{ord.orderNumber}
+                    </td>
+                    <td className="py-4 px-6 text-stone-500">
+                      {ord.createdAt ? new Date(ord.createdAt).toLocaleDateString('en-IN', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric'
+                      }) : 'Recent'}
+                    </td>
+                    <td className="py-4 px-6 font-semibold text-stone-900">
+                      {ord.consumerName || 'Consumer'}
+                    </td>
+                    <td className="py-4 px-6 text-stone-600">
+                      {ord.shippingCity}, {ord.shippingState}
+                    </td>
+                    <td className="py-4 px-6 font-extrabold text-stone-900">
+                      ₹{(ord.totalAmount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                    </td>
+                    <td className="py-4 px-6">
+                      <OrderStatusBadge status={ord.status} />
+                    </td>
+                    <td className="py-4 px-6 text-right">
+                      <Link
+                        to="/admin/orders"
+                        className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 font-semibold transition-colors"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                        Details
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="p-12 text-center text-stone-500">
+            <Package className="w-10 h-10 text-stone-300 mx-auto mb-3" />
+            <p className="font-bold text-stone-700 text-sm">No transactions recorded yet</p>
+            <p className="text-xs text-stone-400 max-w-sm mx-auto mt-1">
+              New consumer orders placed on the marketplace will show up here.
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default AdminDashboard;
