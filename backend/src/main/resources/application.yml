@@ -34,7 +34,7 @@ app:
     secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
     expiration-ms: ${JWT_EXPIRATION_MS:86400000}
   cors:
-    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000}
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000,https://rainbow-tiramisu-2b7697.netlify.app}
   upload:
     dir: ${UPLOAD_DIR:uploads}
     allowed-extensions: jpg,jpeg,png,webp
