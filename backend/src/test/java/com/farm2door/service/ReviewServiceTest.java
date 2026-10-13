@@ -104,7 +104,7 @@ class ReviewServiceTest {
             return r;
         });
         when(reviewRepository.countByProductId(100L)).thenReturn(1L);
-        when(reviewRepository.calculateAverageRating(100L)).thenReturn(new BigDecimal("5.00"));
+        when(reviewRepository.calculateAverageRating(100L)).thenReturn(5.0);
 
         ReviewResponse response = reviewService.createReview(2L, 100L, request);
 

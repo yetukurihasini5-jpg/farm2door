@@ -83,11 +83,12 @@ public class ReviewService {
 
         // Update product aggregated rating and review count
         long count = reviewRepository.countByProductId(productId);
-        BigDecimal avg = reviewRepository.calculateAverageRating(productId);
-        if (avg == null) {
-            avg = BigDecimal.valueOf(request.getRating());
+        Double avgRating = reviewRepository.calculateAverageRating(productId);
+        BigDecimal avg;
+        if (avgRating == null) {
+            avg = BigDecimal.valueOf(request.getRating()).setScale(2, RoundingMode.HALF_UP);
         } else {
-            avg = avg.setScale(2, RoundingMode.HALF_UP);
+            avg = BigDecimal.valueOf(avgRating).setScale(2, RoundingMode.HALF_UP);
         }
 
         product.setRatingAverage(avg);

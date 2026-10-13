@@ -140,11 +140,11 @@ The database is pre-seeded with realistic test accounts. The login screen featur
 
 | Role | Email | Password | Pre-seeded Details |
 | :--- | :--- | :--- | :--- |
-| **Admin** | `admin@farm2door.com` | `Admin123!` | System administrator with global control panel |
-| **Farmer** | `raju.farmer@farm2door.com` | `Farmer123!` | Raju Patel — Green Valley Organic Farm |
-| **Farmer** | `anita.farmer@farm2door.com` | `Farmer123!` | Anita Sharma — Sunrise Heritage Orchards |
-| **Consumer** | `consumer@farm2door.com` | `Consumer123!` | Sita Devi — Has delivered order & saved addresses |
-| **Consumer** | `rahul.consumer@farm2door.com` | `Consumer123!` | Rahul Kumar — Verified consumer buyer |
+| **Admin** | `admin@farm2door.com` | `admin123` | Platform Administrator with global control panel |
+| **Farmer** | `raju.farmer@farm2door.com` | `farmer123` | Raju Patel — Patel Organic Green Acres |
+| **Farmer** | `anita.farmer@farm2door.com` | `farmer123` | Anita Sharma — Himalayan Foothills Orchard |
+| **Consumer** | `consumer@farm2door.com` | `consumer123` | Priya Sundaram — Consumer buyer with delivered order |
+| **Consumer** | `rahul.consumer@farm2door.com` | `consumer123` | Rahul Kumar — Verified consumer buyer |
 
 ---
 

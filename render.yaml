@@ -9,7 +9,7 @@ services:
     dockerfilePath: Dockerfile
     dockerContext: .
     plan: free
-    healthCheckPath: /v3/api-docs
+    healthCheckPath: /api/health
     envVars:
       # Database connection (Connect to your managed MySQL or cloud DB)
       # Format: jdbc:mysql://<HOST>:<PORT>/<DB_NAME>?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
@@ -26,9 +26,9 @@ services:
       - key: JWT_EXPIRATION_MS
         value: "86400000"
 
-      # Allowed CORS Origins (Include your Netlify app and local dev URLs)
+      # Allowed CORS Origins (Include your Netlify app, Render frontend, and local dev URLs)
       - key: CORS_ALLOWED_ORIGINS
-        value: "https://rainbow-tiramisu-2b7697.netlify.app,http://localhost:5173,http://localhost:3000"
+        value: "https://rainbow-tiramisu-2b7697.netlify.app,https://farm2door-frontend.onrender.com,http://localhost:5173,http://localhost:3000"
 
       # File Upload Directory
       - key: UPLOAD_DIR
@@ -37,3 +37,19 @@ services:
       # Spring Profile
       - key: SPRING_PROFILES_ACTIVE
         value: dev
+
+  # ============================================================================
+  # Farm2Door React Frontend (SPA Client)
+  # ============================================================================
+  - type: static
+    name: farm2door-frontend
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    publishDir: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://farm2door-backend.onrender.com/api
