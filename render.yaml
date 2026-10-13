@@ -1,0 +1,39 @@
+services:
+  # ============================================================================
+  # Farm2Door Spring Boot Backend API
+  # ============================================================================
+  - type: web
+    name: farm2door-backend
+    runtime: docker
+    rootDir: backend
+    dockerfilePath: Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /v3/api-docs
+    envVars:
+      # Database connection (Connect to your managed MySQL or cloud DB)
+      # Format: jdbc:mysql://<HOST>:<PORT>/<DB_NAME>?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+
+      # Security & JWT Token Config
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRATION_MS
+        value: "86400000"
+
+      # Allowed CORS Origins (Include your Netlify app and local dev URLs)
+      - key: CORS_ALLOWED_ORIGINS
+        value: "https://rainbow-tiramisu-2b7697.netlify.app,http://localhost:5173,http://localhost:3000"
+
+      # File Upload Directory
+      - key: UPLOAD_DIR
+        value: uploads
+
+      # Spring Profile
+      - key: SPRING_PROFILES_ACTIVE
+        value: dev
